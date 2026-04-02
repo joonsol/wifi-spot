@@ -1,11 +1,13 @@
-import React, { useState, useMemo ,useEffect} from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import wifiData from '../assets/wifi.json'
 import MapView from '../components/MapView'
+import { useFavoritesContext } from '../contexts/FavoritesContext';
 const MapPage = () => {
   const [q, setQ] = useState('')
   const [selectedSpot, setSelectedSpot] = useState(null)
   const { state } = useLocation()
+  const { toggle, isFavorite } = useFavoritesContext()
 
   useEffect(() => {
     if (state?.selectedSpot) {
@@ -71,7 +73,7 @@ const MapPage = () => {
           {filtered.map((item, idx) => (
             <li
               key={idx}
-               onClick={() => setSelectedSpot(item)}
+              onClick={() => setSelectedSpot(item)}
               className='rounded-xl p-3 hover:bg-slate-50 cursor-pointer'
             >
               <div className='flex items-start justify-between gap-3'>
@@ -80,6 +82,12 @@ const MapPage = () => {
                   <div className='mt-1 text-xs text-slate-500'>{item.detail}</div>
                 </div>
                 <div className='rounded-full bg-slate-100 px-2 text-xs text-slate-600'>{item.phone}</div>
+                <span
+                  onClick={(e) => { e.stopPropagation(); toggle(item); }}
+                  className="cursor-pointer select-none text-lg"
+                >
+                  {isFavorite(item) ? '❤' : '♡'}
+                </span>
               </div>
             </li>
           ))}
